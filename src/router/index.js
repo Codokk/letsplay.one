@@ -18,6 +18,11 @@ const routes = [
     component: () => import('@/views/Edit.vue'),
   },
   {
+    path: '/me',
+    name: 'Me',
+    component: () => import('@/views/Me.vue'),
+  },
+  {
     path: '/profile',
     name: 'Profile',
     component: () => import('@/views/Profile.vue'),

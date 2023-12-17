@@ -7,6 +7,7 @@ export const appStore = defineStore("appStore", {
     pb: new Pocketbase(PBURL),
     avatarUrl: `${PBURL}/api/files/_pb_users_auth_/`,
     assetUrl: `${PBURL}/api/files/`,
+    currentUser: null,
   }),
   actions: {
     // Auth
@@ -14,9 +15,10 @@ export const appStore = defineStore("appStore", {
       return new Promise((res, rej) => {
         this.pb
           .collection("users")
-          .authWithOAuth2({ provider: provider, expand: "friends, cardids" })
+          .authWithOAuth2({ provider: provider })
           .then(() => {
             this.currentUser = this.pb.authStore.model;
+            console.log(this.currentUser)
             res(true);
           })
           .catch((err) => {
