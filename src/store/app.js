@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import Pocketbase from "pocketbase";
 
-const PBURL = import.meta.env.VITE_PB_HOST;
+const PBURL = import.meta.env.VITE_PB_HOST || "http://pocketbase.letsplay.one" ;
 export const appStore = defineStore("appStore", {
   state: () => ({
     pb: new Pocketbase(PBURL),
