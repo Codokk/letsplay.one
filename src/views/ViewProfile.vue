@@ -27,11 +27,15 @@ const modpack = ref(null);
 onMounted(() => {
     store.pb.collection("modpacks").getOne(id).then((modpackData) => {
         modpack.value = modpackData;
+        console.log(modpackData)
     });
 });
 
 const downloadModpack = () => {
+    // Open a new tab with the download link
+    const link = `${store.assetUrl}${modpack.value.collectionId}/${modpack.value.id}/${modpack.value.file}?token=`
+    window.open(link, '_blank');
     // Add your download logic here
-    
+    // https://pocketbase.letsplay.one/api/files/dmboskv3b5tnzfm/${id}/default_1702778919657_HdKzmJqNvD.r2z?token=
 };
 </script>
