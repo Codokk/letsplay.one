@@ -65,6 +65,6 @@ export const appStore = defineStore("appStore", {
       } catch (err) {
         return "https://placehold.co/400";
       }
-    },    
+    },
   },
 });

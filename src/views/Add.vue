@@ -1,71 +1,52 @@
 <template>
-    <v-container>
+    <div id="PrimaryContainer">
         <v-card>
             <v-card-title>
-                Create a Modpack Profile
+                Create Anonymous Modpack Profile
             </v-card-title>
             <v-card-text>
-                <v-form v-model="valid">
+                <v-form>
                     <v-container>
                         <v-row>
-                            <v-col cols="4" md="4">
-                                <v-text-field v-model="firstname" :rules="nameRules" :counter="10" :label="'https://letsplay.one/' + store.currentUser.username"
-                                    required hide-details></v-text-field>
+                            <v-col cols="12">
+                                <v-text-field disabled label="https://letsplay.one/####" required hide-details></v-text-field>
                             </v-col>
+                            <v-select
+                                v-model="Game"
+                                :items="Games"
+                                label="Game"
+                                required>
+                            </v-select>
                         </v-row>
                     </v-container>
-                    <v-file-input label="Upload mods configuration" @change="handleZipFile"></v-file-input>
+                    <v-file-input :label="GameUploadDescription[Game]" @change="handleZipFile"></v-file-input>
                 </v-form>
-                <v-data-table v-if="Mods.length > 0" :items="Mods"></v-data-table>
+                <v-data-table max-height="400" v-if="Mods.length > 0" :items="Mods"></v-data-table>
             </v-card-text>
             <v-card-actions class="float-right">
                 <v-btn color="success" @click="save" >Save</v-btn>
                 <v-btn color="red" @click="delete">Delete</v-btn>
             </v-card-actions>
         </v-card>
-    </v-container>
-    <!-- <v-app-bar color="surface-variant" title="ModGame"></v-app-bar> -->
+    </div>
 
-    <v-form v-model="valid">
-        <v-container>
-            <v-row>
-                <v-col cols="4" md="4">
-                    <v-text-field v-model="firstname" :rules="nameRules" :counter="10" label="First name" required
-                        hide-details></v-text-field>
-                </v-col>
-
-                <v-col cols="4" md="4">
-                    <v-text-field v-model="lastname" :rules="nameRules" :counter="10" label="Last name" hide-details
-                        required></v-text-field>
-                </v-col>
-
-                <v-col cols="4" md="4">
-                    <v-text-field v-model="email" :rules="emailRules" label="E-mail" hide-details required></v-text-field>
-                </v-col>
-            </v-row>
-        </v-container>
-        <v-file-input label="Upload mods configuration" @change="handleZipFile"></v-file-input>
-
-
-
-        <v-textarea label="Custom Css"></v-textarea>
-        <v-card class="preview-box">
-        </v-card>
-
-
-
-        <v-btn color="primary">Preview</v-btn>
-
-
-        <!-- Your content goes here -->
-    </v-form>
 </template>
 
 <script setup>
 import JSZip from 'jszip';
 import { ref } from 'vue';
 import { appStore } from '@/store/app';
-
+const ModFile = ref();
+const Game = ref("");
+const Games = [
+    "Lethal Company",
+    "Rimworld"
+]
+const GameUploadDescription = {
+    "": "Upload a zip file containing a mods.yml",
+    "Lethal Company": "Upload a r2z file",
+    "Rimworld": "Upload a zip file containing a About.xml and manifest.json file"
+}
 const store = appStore();
 if (store.pb.authStore.isValid) {
     store.currentUser = store.pb.authStore.model;
@@ -74,6 +55,7 @@ const Mods = ref([]);
 
 function handleZipFile(event) {
     const file = event.target.files[0];
+    ModFile.value = file;
     // Verify file extension
     if (!file.name.endsWith('.r2z')) {
         console.error('Invalid file type. Please upload a zip file.');
@@ -122,40 +104,40 @@ function yamlToJson(yaml) {
     }
     return result;
 }
-</script>
 
+function save() {
+    const modpack = {
+        name: "Anonymous Modpack",
+        game: Game.value,
+        version: "1.0.0",
+        description: "This is a custom anonymous modpack for Lethal Company",
+        mods: Mods.value,
+        file: ModFile.value
+        }
+    console.log(modpack);
+    // Upload to pocketbase, get the url, and save it to the user's profile
+    store.pb.collection("modpacks").create(modpack).then((docRef) => {
+        console.log("Document written with ID: ", docRef.id);
+    });
+}
+</script>
 
 
 
 <!-- ADD Functionality for preview -->
 
 <style scoped>
-.v-application {
-    background-color: #f5f5f5;
+#PrimaryContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top:0;
+    left:0;
 }
-
-.preview-box {
-    width: 300px;
-    height: 300px;
-    background-color: #f5f5f5;
-    border: 1px solid #ccc;
-    /* Add any other styles you want */
+.v-table {
+    max-height: 25rem;
 }
 </style>
-
-
-
-
-
-# add a function to preview the custom css
-function preview() {
-    // get the custom css
-    // apply the custom css to the preview box
-}
-
-
-# add a function to upload the mods configuration
-# add a function to save the profile
-# add a function to load the profile
-# add a function to delete the profile
-# add a function to reset the profile

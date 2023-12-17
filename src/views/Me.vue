@@ -19,7 +19,7 @@
                     <v-expansion-panel v-for="Modpack in Modpacks" :key="i">
                         <v-expansion-panel-title expand-icon="mdi-menu-down">
                             <v-btn class="mr-2">
-                                Lethal Company
+                                   Welcome to Lethal Company
                             </v-btn>
                             <span> Modpack Name</span>
                         </v-expansion-panel-title>
